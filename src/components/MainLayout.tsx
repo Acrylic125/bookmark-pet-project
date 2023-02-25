@@ -6,12 +6,15 @@ const MainLayout = ({ children }: { children: React.ReactNode }) => {
     <Box
       sx={{
         position: "relative",
+        backgroundColor: "grey.50",
+        minHeight: "100vh",
       }}
     >
       <Box
         sx={{
           position: "sticky",
           top: 0,
+          zIndex: 1,
         }}
       >
         <Navbar />
