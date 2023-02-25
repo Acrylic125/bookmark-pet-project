@@ -1,4 +1,5 @@
-import { Box, Typography } from "@mui/material";
+import { Box, Button, Typography } from "@mui/material";
+import { signIn,  } from "next-auth/react";
 import Head from "next/head";
 
 export default function Home() {
@@ -12,7 +13,9 @@ export default function Home() {
       </Head>
       <main>
         <Box>
-          <Typography variant="h1">Hello</Typography>
+          <Button variant="contained" color="primary" onClick={() => signIn() }>
+            Sign In
+          </Button>
         </Box>
       </main>
     </>
