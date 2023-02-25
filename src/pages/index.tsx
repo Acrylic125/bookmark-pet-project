@@ -5,6 +5,7 @@ import Image from "next/image";
 import BookmarkBorderIcon from "@mui/icons-material/BookmarkBorder";
 import BookmarkIcon from "@mui/icons-material/Bookmark";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
+import MainLayout from "@/components/MainLayout";
 
 const sellPosts: SellPost[] = [
   {
@@ -150,42 +151,44 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main>
-        <Container maxWidth="xl">
-          <Stack
-            sx={{
-              paddingY: ({ spacing }) => spacing(2),
-            }}
-            gap={2}
-          >
+        <MainLayout>
+          <Container maxWidth="xl">
             <Stack
               sx={{
-                justifyContent: "space-between",
+                paddingY: ({ spacing }) => spacing(2),
               }}
-              spacing={1}
-              direction="row"
+              gap={2}
             >
-              <Typography
+              <Stack
                 sx={{
-                  fontWeight: "bold",
+                  justifyContent: "space-between",
                 }}
-                component="h1"
-                variant="h4"
+                spacing={1}
+                direction="row"
               >
-                Sell Posts
-              </Typography>
-              <Button variant="contained">Create</Button>
+                <Typography
+                  sx={{
+                    fontWeight: "bold",
+                  }}
+                  component="h1"
+                  variant="h4"
+                >
+                  Sell Posts
+                </Typography>
+                <Button variant="contained">Create</Button>
+              </Stack>
+              <Grid container spacing={1}>
+                {sellPosts.map((post) => {
+                  return (
+                    <Grid item key={post.id} xs={12} sm={6} md={4} lg={3}>
+                      <SellPostListing name={post.name} />
+                    </Grid>
+                  );
+                })}
+              </Grid>
             </Stack>
-            <Grid container spacing={1}>
-              {sellPosts.map((post) => {
-                return (
-                  <Grid item key={post.id} xs={12} sm={6} md={4} lg={3}>
-                    <SellPostListing name={post.name} />
-                  </Grid>
-                );
-              })}
-            </Grid>
-          </Stack>
-        </Container>
+          </Container>
+        </MainLayout>
       </main>
     </>
   );
