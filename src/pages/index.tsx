@@ -152,7 +152,12 @@ export default function Home() {
       </Head>
       <main>
         <MainLayout>
-          <Container maxWidth="xl">
+          <Container
+            sx={{
+              paddingY: ({ spacing }) => spacing(2),
+            }}
+            maxWidth="xl"
+          >
             <Stack
               sx={{
                 paddingY: ({ spacing }) => spacing(2),
