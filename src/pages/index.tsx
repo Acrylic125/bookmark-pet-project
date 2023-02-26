@@ -5,7 +5,6 @@ import { EmailRequestBody } from "./api/sendNotificationEmail";
 
 export default function Home() {
   async function sendNotificationEmail() {
-
     const requestBody: EmailRequestBody = {
       emailID: "karandeepsingh00@icloud.com",
       name: "Karan",
@@ -23,6 +22,18 @@ export default function Home() {
     console.log(data);
   }
 
+  async function testSignIn() {
+    // api call to test sign in
+    const response = await fetch("/api/auth/testSignIn", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    const data = await response.json();
+    console.log(data);
+  }
+
   return (
     <Container maxWidth="md">
       <Head>
@@ -32,13 +43,39 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main>
-        <Box>
-          <Button variant="contained" color="primary" sx={{ m: 4, textAlign: "center" }} onClick={() => signIn()}>
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <Button
+            variant="contained"
+            color="primary"
+            sx={{ m: 2, textAlign: "center", width: "40%" }}
+            onClick={() => signIn()}
+          >
             Sign In
           </Button>
           <br />
-          <Button variant="contained" color="primary" sx={{ textAlign: "center" }} onClick={sendNotificationEmail}>
+          <Button
+            variant="contained"
+            color="primary"
+            sx={{ m: 2, textAlign: "center", width: "40%" }}
+            onClick={sendNotificationEmail}
+          >
             Send Notification Email
+          </Button>
+          <br />
+          <Button
+            variant="contained"
+            color="primary"
+            sx={{ m: 2, textAlign: "center", width: "40%" }}
+            onClick={testSignIn}
+          >
+            Test Sign In
           </Button>
         </Box>
       </main>
