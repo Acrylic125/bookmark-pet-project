@@ -48,7 +48,10 @@ export default async function handler(
       },
     });
 
-    if (response.name) {
+    if (response.id) {
+      res.status(201).json({ success: true, message: "User created" });
+    } else {
+      res.status(500).json({ success: false, message: "Something went wrong" });
     }
   } else {
     res.status(405).end();
