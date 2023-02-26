@@ -1,34 +1,20 @@
 import { Container, Box, Typography, Grid, Stack, useTheme, Button, Chip } from "@mui/material";
 import Head from "next/head";
-import type { SellPost } from "@prisma/client";
 import Image from "next/image";
 import BookmarkBorderIcon from "@mui/icons-material/BookmarkBorder";
 import BookmarkIcon from "@mui/icons-material/Bookmark";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import MainLayout from "@/components/MainLayout";
-
-const sellPosts: SellPost[] = [
-  {
-    id: "1",
-    name: "Test",
-    description: "Test",
-    listingId: "1",
-    status: "ACTIVE",
-  },
-  {
-    id: "2",
-    name: "Some product",
-    description: "Some product",
-    listingId: "2",
-    status: "ACTIVE",
-  },
-];
+import { useQuery } from "react-query";
+import { z } from "zod";
+import Link from "next/link";
 
 function SellPostListing({ name, bookmarked, soldOut }: { name: string; bookmarked?: boolean; soldOut?: boolean }) {
   return (
     <Stack
       sx={{
         width: "100%",
+        overflow: "hidden",
         borderColor: "grey.200",
         borderStyle: "solid",
         borderWidth: 1,
@@ -141,7 +127,27 @@ function SellPostListing({ name, bookmarked, soldOut }: { name: string; bookmark
   );
 }
 
+const SellPostSchema = z.object({
+  id: z.string(),
+  name: z.string(),
+  description: z.string(),
+  status: z.enum(["active", "inactive"]),
+});
+const SellPostArraySchema = z.array(SellPostSchema);
+
 export default function Home() {
+  const { data: sellPosts } = useQuery(["sellPosts"], async () => {
+    const resp = await fetch("/api/sell-post", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    const data = await resp.json();
+
+    return SellPostArraySchema.parse(data);
+  });
+
   return (
     <>
       <Head>
@@ -180,17 +186,21 @@ export default function Home() {
                 >
                   Sell Posts
                 </Typography>
-                <Button variant="contained">Create</Button>
+                <Link href="/sell-post/create">
+                  <Button variant="contained">Create</Button>
+                </Link>
               </Stack>
-              <Grid container spacing={1}>
-                {sellPosts.map((post) => {
-                  return (
-                    <Grid item key={post.id} xs={12} sm={6} md={4} lg={3}>
-                      <SellPostListing name={post.name} />
-                    </Grid>
-                  );
-                })}
-              </Grid>
+              {sellPosts && sellPosts.length > 0 && (
+                <Grid container spacing={1}>
+                  {sellPosts.map((post) => {
+                    return (
+                      <Grid item key={post.id} xs={12} sm={6} md={4} lg={3}>
+                        <SellPostListing name={post.name} />
+                      </Grid>
+                    );
+                  })}
+                </Grid>
+              )}
             </Stack>
           </Container>
         </MainLayout>
