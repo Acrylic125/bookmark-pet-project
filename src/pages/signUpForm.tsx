@@ -43,8 +43,8 @@ function SignUpForm() {
     });
 
     const data = await res.json();
-    
-    alert(data.error ? data.message : "User created successfully")
+
+    alert(data.success ? "User created successfully" : data.message)
   };
 
   return (
