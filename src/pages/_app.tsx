@@ -4,10 +4,13 @@ import { SessionProvider } from "next-auth/react";
 import type { Session } from "next-auth";
 import { createTheme, responsiveFontSizes, StyledEngineProvider, ThemeProvider } from "@mui/material";
 import { NextComponentType } from "next";
+import { QueryClient, QueryClientProvider, useQuery } from "react-query";
+
+const queryClient = new QueryClient();
 
 let theme = createTheme({
   palette: {
-    mode: "dark",
+    mode: "light",
     primary: {
       main: "#DA127D",
       "50": "#FFE3EC",
@@ -62,10 +65,11 @@ let theme = createTheme({
       paper: "#1F2933",
     },
     text: {
-      primary: "#F5F7FA",
+      primary: "#4D5860",
     },
   },
 });
+
 theme = responsiveFontSizes(theme);
 
 type ExtendedAppProps<P> = AppProps<P> & {
@@ -82,7 +86,9 @@ export default function MyApp<P>({ Component, pageProps: { session, ...pageProps
     <StyledEngineProvider injectFirst>
       <ThemeProvider theme={theme}>
         <SessionProvider session={session}>
-          <Component {...pageProps} />
+          <QueryClientProvider client={queryClient}>
+            <Component {...pageProps} />
+          </QueryClientProvider>
         </SessionProvider>
       </ThemeProvider>
     </StyledEngineProvider>
