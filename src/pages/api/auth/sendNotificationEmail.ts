@@ -1,18 +1,22 @@
-// Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import type { NextApiRequest, NextApiResponse } from "next";
 import sibClient from "@sendinblue/client";
-import { getSession  } from "next-auth/react";
-
+import { getSession } from "next-auth/react";
 
 type Response = {
   success: boolean;
   message?: string;
 };
 
+type EmailRequestBody = {
+  emailID: string;
+  name: string;
+  message: string;
+};
+
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse<Response>
-) {
+): Promise<void> {
   if (req.method !== "POST") {
     res.status(405).json({
       success: false,
@@ -22,7 +26,7 @@ export default async function handler(
   }
 
   const session = await getSession({ req });
-  if (!session) {
+  if (!session || !session.user || session.user.role !== 0) {
     res.status(401).json({
       success: false,
       message: "Unauthorized",
@@ -30,40 +34,18 @@ export default async function handler(
     return;
   }
 
-  if (!session.user) {
-    res.status(401).json({
-      success: false,
-      message: "Unauthorized",
-    });
-    return;
-  }
-
-  const user = session.user;
-
-  if (!user || user.role !== 0) {
-    res.status(401).json({
-      success: false,
-      message: "Unauthorized",
-    });``
-    return;
-  }
-
-  let emailID: string, name: string, message: string;
-  emailID = req.body.emailID;
-  name = req.body.name;
-  message = req.body.message;
+  const { emailID, name, message }: EmailRequestBody = req.body;
 
   if (!emailID || !name || !message) {
     res.status(400).json({
       success: false,
       message: "Missing parameters",
     });
+    return;
   }
 
   const apiInstance = new sibClient.TransactionalEmailsApi();
-  let sendSmtpEmail = new sibClient.SendSmtpEmail();
-
-  sendSmtpEmail = {
+  const sendSmtpEmail = {
     to: [
       {
         email: emailID,
