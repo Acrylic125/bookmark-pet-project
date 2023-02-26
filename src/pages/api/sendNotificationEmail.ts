@@ -7,7 +7,7 @@ type Response = {
   message?: string;
 };
 
-type EmailRequestBody = {
+export interface EmailRequestBody {
   emailID: string;
   name: string;
   message: string;
@@ -63,7 +63,7 @@ export default async function handler(
       <body>
         <h1>Listing Alerts</h1>
         <p>Hi ${name},</p>
-        <p>Here are the latest listings for you:</p>
+        <p>Here are your latest alerts:</p>
         <p>${message}</p>
         <p><a href="http://localhost:3000/unsubscribe">Manage your alert preferences</a></p>
       </body>
