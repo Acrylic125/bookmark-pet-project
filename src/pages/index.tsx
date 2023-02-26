@@ -34,6 +34,13 @@ export default function Home() {
     console.log(data);
   }
 
+  async function testSignInNextAuth() {
+    signIn("credentials", {
+      email: "karandeepsingh00@icloud.com",
+      password: "testtesttest",
+    });
+  }
+
   return (
     <Container maxWidth="md">
       <Head>
@@ -54,7 +61,7 @@ export default function Home() {
           <Button
             variant="contained"
             color="primary"
-            sx={{ m: 2, textAlign: "center", width: "40%" }}
+            sx={{ m: 2, textAlign: "center", width: "60%" }}
             onClick={() => signIn()}
           >
             Sign In
@@ -63,7 +70,7 @@ export default function Home() {
           <Button
             variant="contained"
             color="primary"
-            sx={{ m: 2, textAlign: "center", width: "40%" }}
+            sx={{ m: 2, textAlign: "center", width: "60%" }}
             onClick={sendNotificationEmail}
           >
             Send Notification Email
@@ -72,10 +79,18 @@ export default function Home() {
           <Button
             variant="contained"
             color="primary"
-            sx={{ m: 2, textAlign: "center", width: "40%" }}
+            sx={{ m: 2, textAlign: "center", width: "60%" }}
             onClick={testSignIn}
           >
-            Test Sign In
+            Test Sign In (Hardcoded credentials, Prisma)
+          </Button>
+          <Button
+            variant="contained"
+            color="primary"
+            sx={{ m: 2, textAlign: "center", width: "60%" }}
+            onClick={testSignIn}
+          >
+            Test Sign In (Hardcoded credentials, NextAuth)
           </Button>
         </Box>
       </main>
