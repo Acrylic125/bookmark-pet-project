@@ -88,7 +88,7 @@ export default function Home() {
             variant="contained"
             color="primary"
             sx={{ m: 2, textAlign: "center", width: "60%" }}
-            onClick={testSignIn}
+            onClick={testSignInNextAuth}
           >
             Test Sign In (Hardcoded credentials, NextAuth)
           </Button>

@@ -1,5 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from "next";
-import sibClient from "@sendinblue/client";
+import sibClient from 'src/utils/sib.js'
 import { getSession } from "next-auth/react";
 
 type Response = {
@@ -26,7 +26,7 @@ export default async function handler(
   }
 
   const session = await getSession({ req });
-  if (!session || !session.user || session.user.role !== 0) {
+  if (!session || !session.user ) {
     res.status(401).json({
       success: false,
       message: "Unauthorized",
@@ -43,6 +43,8 @@ export default async function handler(
     });
     return;
   }
+
+  console.log("Sending email to " + emailID);
 
   const apiInstance = new sibClient.TransactionalEmailsApi();
   const sendSmtpEmail = {
@@ -69,8 +71,13 @@ export default async function handler(
       </body>
       </html>
       `,
-    params: {},
-    headers: {},
+    params: {
+      name: name,
+      message: message,
+    },
+    headers: {
+      'X-Mailin-custom': '',
+    },
   };
 
   try {
@@ -79,7 +86,7 @@ export default async function handler(
       success: true,
     });
   } catch (error) {
-    console.log(error);
+    console.log("error", error);
     res.status(500).json({
       success: false,
       message: "An unexpected error occurred while sending the email.",

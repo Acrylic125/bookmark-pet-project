@@ -16,7 +16,6 @@
     "@next-auth/prisma-adapter": "^1.0.5",
     "@next/font": "13.1.6",
     "@prisma/client": "^4.10.1",
-    "@sendinblue/client": "^3.2.2",
     "@types/node": "18.14.1",
     "@types/react": "18.0.28",
     "@types/react-dom": "18.0.11",
@@ -27,6 +26,7 @@
     "next-auth": "^4.19.2",
     "react": "18.2.0",
     "react-dom": "18.2.0",
+    "sib-api-v3-sdk": "^8.5.0",
     "typescript": "4.9.5"
   },
   "devDependencies": {

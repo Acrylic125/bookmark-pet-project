@@ -45,6 +45,7 @@ export default async function handler(
         emailVerified: new Date(),
         image: null,
         password: hashedPassword,
+        role: 0
       },
     });
 
