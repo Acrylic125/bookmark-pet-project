@@ -84,6 +84,7 @@ function SellPostListing({ name, bookmarked, soldOut }: { name: string; bookmark
           <Typography
             sx={{
               fontWeight: "bold",
+              color: "grey.800",
               wordBreak: "break-word",
             }}
             component="h5"
@@ -182,7 +183,7 @@ export default function Home() {
                     fontWeight: "bold",
                   }}
                   component="h1"
-                  variant="h4"
+                  variant="h5"
                 >
                   Sell Posts
                 </Typography>
@@ -195,7 +196,14 @@ export default function Home() {
                   {sellPosts.map((post) => {
                     return (
                       <Grid item key={post.id} xs={12} sm={6} md={4} lg={3}>
-                        <SellPostListing name={post.name} />
+                        <Link
+                          style={{
+                            textDecoration: "none",
+                          }}
+                          href={`/sell-post/${post.id}`}
+                        >
+                          <SellPostListing name={post.name} />
+                        </Link>
                       </Grid>
                     );
                   })}
