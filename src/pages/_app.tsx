@@ -62,7 +62,7 @@ let theme = createTheme({
     },
     background: {
       default: "#1F2933",
-      paper: "#1F2933",
+      paper: "#EDEDF3",
     },
     text: {
       primary: "#4D5860",
