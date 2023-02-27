@@ -14,7 +14,6 @@ const CreateSellPostBody = z.object({
 async function POST(req: NextApiRequest, res: NextApiResponse<SellPost>) {
   const body = CreateSellPostBody.parse(req.body);
 
-  console.log(body);
   try {
     const created = await client.sellPost.create({
       data: {
