@@ -49,7 +49,7 @@ model Session {
   userId       String   @map("user_id") @db.Uuid
   expires      DateTime
   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  
+
   @@map("sessions")
 }
 

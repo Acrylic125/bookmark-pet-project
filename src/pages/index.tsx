@@ -1,9 +1,12 @@
 import { Container, Box, Button } from "@mui/material";
-import { signIn } from "next-auth/react";
+import { signIn, useSession } from "next-auth/react";
 import Head from "next/head";
 import { EmailRequestBody } from "./api/sendNotificationEmail";
 
 export default function Home() {
+  const { data } = useSession();
+  console.log(data);
+
   async function sendNotificationEmail() {
     const requestBody: EmailRequestBody = {
       emailID: "karandeepsingh00@icloud.com",
@@ -58,38 +61,18 @@ export default function Home() {
             justifyContent: "center",
           }}
         >
-          <Button
-            variant="contained"
-            color="primary"
-            sx={{ m: 2, textAlign: "center", width: "60%" }}
-            onClick={() => signIn()}
-          >
+          <Button variant="contained" color="primary" sx={{ m: 2, textAlign: "center", width: "60%" }} onClick={() => signIn()}>
             Sign In
           </Button>
           <br />
-          <Button
-            variant="contained"
-            color="primary"
-            sx={{ m: 2, textAlign: "center", width: "60%" }}
-            onClick={sendNotificationEmail}
-          >
+          <Button variant="contained" color="primary" sx={{ m: 2, textAlign: "center", width: "60%" }} onClick={sendNotificationEmail}>
             Send Notification Email
           </Button>
           <br />
-          <Button
-            variant="contained"
-            color="primary"
-            sx={{ m: 2, textAlign: "center", width: "60%" }}
-            onClick={testSignIn}
-          >
+          <Button variant="contained" color="primary" sx={{ m: 2, textAlign: "center", width: "60%" }} onClick={testSignIn}>
             Test Sign In (Hardcoded credentials, Prisma)
           </Button>
-          <Button
-            variant="contained"
-            color="primary"
-            sx={{ m: 2, textAlign: "center", width: "60%" }}
-            onClick={testSignIn}
-          >
+          <Button variant="contained" color="primary" sx={{ m: 2, textAlign: "center", width: "60%" }} onClick={testSignIn}>
             Test Sign In (Hardcoded credentials, NextAuth)
           </Button>
         </Box>
