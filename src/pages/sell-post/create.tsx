@@ -33,70 +33,75 @@ const CreateSellPost = () => {
   return (
     <MainLayout>
       <Container maxWidth="xl">
-        <Stack
-          sx={({ spacing }) => ({
-            width: "100%",
-            color: "grey.300",
-            paddingX: spacing(2),
-            paddingY: spacing(4),
-          })}
-          gap={2}
+        <form
+          onSubmit={async (e) => {
+            e.preventDefault();
+            await createSellPost({ name, description });
+          }}
         >
-          <Typography
-            sx={{
-              fontWeight: "bold",
-              color: "grey.700",
-            }}
-            component="h1"
-            variant="h5"
+          <Stack
+            sx={({ spacing }) => ({
+              width: "100%",
+              color: "grey.300",
+              paddingX: spacing(2),
+              paddingY: spacing(4),
+            })}
+            gap={2}
           >
-            Create Sell Post
-          </Typography>
-          <TextField
-            variant="outlined"
-            label="Name"
-            placeholder="Name"
-            value={name}
-            inputProps={{ minLength: 8, maxLength: 128 }}
-            onChange={(e) => {
-              setName(e.target.value);
-            }}
-            required
-          />
-          <TextField
-            variant="outlined"
-            type="text"
-            multiline
-            label="Description"
-            placeholder="Description"
-            value={description}
-            inputProps={{ minLength: 0, maxLength: 2048 }}
-            onChange={(e) => {
-              setDescription(e.target.value);
-            }}
-          />
-          <>
-            {createSellPostError && (
-              <Alert severity="error">{createSellPostError instanceof Error ? createSellPostError.message : "An unknown error occured."}</Alert>
-            )}
-            {createSellPostIsSuccess && <Alert severity="success">Created Sell Post! Redirecting to sell post.</Alert>}
-          </>
-          <Box>
-            <Button
+            <Typography
               sx={{
-                boxShadow: "none",
+                fontWeight: "bold",
+                color: "grey.700",
               }}
-              variant="contained"
-              onClick={async () => {
-                createSellPost({ name, description });
-              }}
-              disabled={createSellPostIsLoading}
+              component="h1"
+              variant="h5"
             >
-              <CircularProgress size={24} sx={{ color: "white", marginRight: 1 }} style={{ display: createSellPostIsLoading ? "block" : "none" }} />
-              Create
-            </Button>
-          </Box>
-        </Stack>
+              Create Sell Post
+            </Typography>
+            <TextField
+              variant="outlined"
+              label="Name"
+              placeholder="Name"
+              value={name}
+              inputProps={{ minLength: 8, maxLength: 128 }}
+              onChange={(e) => {
+                setName(e.target.value);
+              }}
+              required
+            />
+            <TextField
+              variant="outlined"
+              type="text"
+              multiline
+              label="Description"
+              placeholder="Description"
+              value={description}
+              inputProps={{ minLength: 0, maxLength: 2048 }}
+              onChange={(e) => {
+                setDescription(e.target.value);
+              }}
+            />
+            <>
+              {createSellPostError && (
+                <Alert severity="error">{createSellPostError instanceof Error ? createSellPostError.message : "An unknown error occured."}</Alert>
+              )}
+              {createSellPostIsSuccess && <Alert severity="success">Created Sell Post! Redirecting to sell post.</Alert>}
+            </>
+            <Box>
+              <Button
+                sx={{
+                  boxShadow: "none",
+                }}
+                type="submit"
+                variant="contained"
+                disabled={createSellPostIsLoading}
+              >
+                <CircularProgress size={24} sx={{ color: "white", marginRight: 1 }} style={{ display: createSellPostIsLoading ? "block" : "none" }} />
+                Create
+              </Button>
+            </Box>
+          </Stack>
+        </form>
       </Container>
     </MainLayout>
   );
