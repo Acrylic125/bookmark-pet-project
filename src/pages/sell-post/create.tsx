@@ -22,7 +22,7 @@ const CreateSellPost = () => {
       body: JSON.stringify({
         name,
         description,
-        status: "active",
+        status: "available",
       }),
     });
     if (!resp.ok) {
