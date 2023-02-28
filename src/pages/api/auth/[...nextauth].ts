@@ -1,8 +1,46 @@
-import NextAuth, { NextAuthOptions } from "next-auth";
 import prisma from "@/utils/prisma";
 import bcrypt from "bcryptjs";
+import NextAuth, { DefaultSession, NextAuthOptions } from "next-auth";
+
+/**
+ * Module augmentation for `next-auth` types
+ * Allows us to add custom properties to the `session` object
+ * and keep type safety
+ * @see https://next-auth.js.org/getting-started/typescript#module-augmentation
+ **/
+declare module "next-auth" {
+  interface Session extends DefaultSession {
+    user: {
+      id: string;
+      // ...other properties
+      // role: UserRole;
+    } & DefaultSession["user"];
+  }
+
+  // interface User {
+  //   // ...other properties
+  //   // role: UserRole;
+  // }
+}
 
 export const authOptions: NextAuthOptions = {
+  callbacks: {
+    session: async ({ session, token }) => {
+      if (session?.user && typeof token.uid === "string") {
+        session.user.id = token.uid;
+      }
+      return session;
+    },
+    jwt: async ({ user, token }) => {
+      if (user) {
+        token.uid = user.id;
+      }
+      return token;
+    },
+  },
+  session: {
+    strategy: "jwt",
+  },
   providers: [
     {
       id: "credentials",
@@ -26,10 +64,7 @@ export const authOptions: NextAuthOptions = {
 
         if (user && user.password) {
           // Check  if the password is correct
-          const isPasswordCorrect = await bcrypt.compare(
-            credentials.password,
-            user.password
-          );
+          const isPasswordCorrect = await bcrypt.compare(credentials.password, user.password);
 
           // Any object returned will be saved in the `user` property of the JWT
           return isPasswordCorrect ? user : null;
