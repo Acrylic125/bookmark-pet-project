@@ -5,7 +5,7 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import { z } from "zod";
 import { EmailRequestBody } from "@/pages/api/notification/sendNotificationEmail";
 import sendNotificationEmail from "@/pages/api/notification/sendNotificationEmail";
-import { getServerSession } from "next-auth";
+// import { getServerSession } from "next-auth";
 
 const UpdateSellPostBookmarkBody = z.object({
   status: z.enum(["available", "sold_out"]),
@@ -61,7 +61,7 @@ async function PATCH(
       const requestBody: EmailRequestBody = {
         emailID: user.email,
         name: user.name ?? "there", // If there's no name, the user gets addressed with "Hi there"
-        message: `The status of the sell post with id ${sellPostId} has been updated to ${body.status}`,
+        message: `The status of the sell post <h5>"${updated.title}"</h5> has been updated to "${updated.status}".<br><a href="http://localhost:3000/sell-post/${updated.id}">Click to check it out.</a>`,
       };
 
       return await sendNotificationEmail(requestBody);
@@ -82,7 +82,6 @@ async function GET(
   req: NextApiRequest,
   res: NextApiResponse<SellPostUserBookmark[]>
 ) {
-  // const body = SellPostGetBody.parse(req.body);
 
   try {
     const sellPost = await client.sellPostUserBookmark.findMany({
