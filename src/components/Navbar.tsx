@@ -155,7 +155,7 @@ function Navbar() {
               <>
                 <Tooltip title={session.user.email}>
                   <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                    <Avatar alt={session.user.email} src="/static/images/avatar/2.jpg" />
+                    <Avatar alt={session.user.email ?? "User"} src="/static/images/avatar/2.jpg" />
                   </IconButton>
                 </Tooltip>
                 <Menu
