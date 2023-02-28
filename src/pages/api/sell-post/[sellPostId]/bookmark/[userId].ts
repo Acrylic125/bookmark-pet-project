@@ -5,21 +5,21 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import { z } from "zod";
 
 const UpdateSellPostBookmarkBody = z.object({
-  bookmark: z.boolean(),
+  bookmarked: z.boolean(),
 });
 
 async function POST(sellPostId: string, userId: string, req: NextApiRequest, res: NextApiResponse<SellPost>) {
   const body = UpdateSellPostBookmarkBody.parse(req.body);
 
   try {
-    if (!body.bookmark) {
+    if (!body.bookmarked) {
       await client.sellPostUserBookmark.deleteMany({
         where: {
           userId: userId,
           sellPostId: sellPostId,
         },
       });
-      res.status(204);
+      res.status(204).end();
       return;
     }
     await client.sellPostUserBookmark.upsert({
@@ -35,14 +35,21 @@ async function POST(sellPostId: string, userId: string, req: NextApiRequest, res
         },
       },
     });
-    res.status(204);
+    res.status(204).end();
   } catch (error) {
     console.error(error);
     res.status(500).end();
   }
 }
 
-async function GET(sellPostId: string, userId: string, req: NextApiRequest, res: NextApiResponse<SellPostUserBookmark>) {
+async function GET(
+  sellPostId: string,
+  userId: string,
+  req: NextApiRequest,
+  res: NextApiResponse<{
+    bookmarked: boolean;
+  }>
+) {
   // const body = SellPostGetBody.parse(req.body);
 
   try {
@@ -52,12 +59,9 @@ async function GET(sellPostId: string, userId: string, req: NextApiRequest, res:
         userId: userId,
       },
     });
-    if (!sellPostBookmark) {
-      res.status(404).end();
-      return;
-    }
-
-    res.status(200).json(sellPostBookmark);
+    res.status(200).json({
+      bookmarked: !!sellPostBookmark,
+    });
   } catch (error) {
     console.error(error);
     res.status(500).end();
