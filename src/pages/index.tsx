@@ -92,7 +92,7 @@ function SellPostListing({ name, bookmarked, soldOut }: { name: string; bookmark
           >
             {name}
           </Typography>
-          <IconButton>{bookmarked ? <BookmarkIcon color="primary" /> : <BookmarkBorderIcon color="inherit" />}</IconButton>
+          {/* <IconButton>{bookmarked ? <BookmarkIcon color="primary" /> : <BookmarkBorderIcon color="inherit" />}</IconButton> */}
         </Stack>
         <Stack
           sx={{
