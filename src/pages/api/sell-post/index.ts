@@ -8,7 +8,7 @@ const SellPostGetBody = z.object({});
 const CreateSellPostBody = z.object({
   name: z.string().min(8).max(128),
   description: z.string().min(0).max(1024),
-  status: z.enum(["active", "inactive"]),
+  status: z.enum(["available", "sold_out"]),
 });
 
 async function POST(req: NextApiRequest, res: NextApiResponse<SellPost>) {
