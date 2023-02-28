@@ -67,7 +67,7 @@ export default async function handler(
         <p>Hi ${name},</p>
         <p>Here are your latest alerts:</p>
         <p>${message}</p>
-        <p><a href="http://localhost:3000/unsubscribe">Manage your alert preferences</a></p>
+        <p><a href="http://localhost:3000/unsubscribe">Manage your Alert Preferences</a></p>
       </body>
       </html>
       `,
