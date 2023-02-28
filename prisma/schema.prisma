@@ -74,5 +74,6 @@ model SellPostUserBookmark {
   user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   sellPost   SellPost @relation(fields: [sellPostId], references: [id], onDelete: Cascade)
 
+  @@unique([userId, sellPostId])
   @@map("Bookmark")
 }
