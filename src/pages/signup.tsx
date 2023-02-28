@@ -1,13 +1,5 @@
 import { useState } from "react";
-import {
-  Box,
-  Button,
-  Container,
-  FormGroup,
-  Typography,
-  Input,
-  InputLabel,
-} from "@mui/material";
+import { Box, Button, Container, FormGroup, Typography, Input, InputLabel } from "@mui/material";
 
 function SignUpForm() {
   const [name, setName] = useState("");
@@ -31,7 +23,7 @@ function SignUpForm() {
     }
 
     // POST form values
-    const res = await fetch("/api/auth/signUp", {
+    const res = await fetch("/api/auth/signup", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -44,7 +36,7 @@ function SignUpForm() {
 
     const data = await res.json();
 
-    alert(data.success ? "User created successfully" : data.message)
+    alert(data.success ? "User created successfully" : data.message);
   };
 
   return (
@@ -60,32 +52,11 @@ function SignUpForm() {
               Sign Up
             </Typography>
             <InputLabel htmlFor="name">Name</InputLabel>
-            <Input
-              type="name"
-              size="small"
-              id="name"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              sx={{ mb: 2 }}
-            />
+            <Input type="name" size="small" id="name" value={name} onChange={(e) => setName(e.target.value)} sx={{ mb: 2 }} />
             <InputLabel htmlFor="email">Email address</InputLabel>
-            <Input
-              type="email"
-              size="small"
-              id="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              sx={{ mb: 2 }}
-            />
+            <Input type="email" size="small" id="email" value={email} onChange={(e) => setEmail(e.target.value)} sx={{ mb: 2 }} />
             <InputLabel htmlFor="password">Password</InputLabel>
-            <Input
-              type="password"
-              size="small"
-              id="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              sx={{ mb: 2 }}
-            />
+            <Input type="password" size="small" id="password" value={password} onChange={(e) => setPassword(e.target.value)} sx={{ mb: 2 }} />
             {error && (
               <Typography variant="body2" sx={{ color: "red" }}>
                 {error}
