@@ -13,7 +13,7 @@ import Tooltip from "@mui/material/Tooltip";
 import MenuItem from "@mui/material/MenuItem";
 import AdbIcon from "@mui/icons-material/Adb";
 import Link from "next/link";
-import { signIn, useSession } from "next-auth/react";
+import { signIn, signOut, useSession } from "next-auth/react";
 import { Stack } from "@mui/material";
 
 const pages = [
@@ -22,7 +22,6 @@ const pages = [
     href: "/",
   },
 ];
-const settings = ["Profile", "Account", "Dashboard", "Logout"];
 
 function Navbar() {
   const { data: session } = useSession();
@@ -154,9 +153,9 @@ function Navbar() {
           <Box sx={{ flexGrow: 0 }}>
             {session ? (
               <>
-                <Tooltip title="Open settings">
+                <Tooltip title={session.user.email}>
                   <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                    <Avatar alt="Remy Sharp" src="/static/images/avatar/2.jpg" />
+                    <Avatar alt={session.user.email} src="/static/images/avatar/2.jpg" />
                   </IconButton>
                 </Tooltip>
                 <Menu
@@ -175,11 +174,13 @@ function Navbar() {
                   open={Boolean(anchorElUser)}
                   onClose={handleCloseUserMenu}
                 >
-                  {settings.map((setting) => (
-                    <MenuItem key={setting} onClick={handleCloseUserMenu}>
-                      <Typography textAlign="center">{setting}</Typography>
-                    </MenuItem>
-                  ))}
+                  <MenuItem
+                    onClick={() => {
+                      signOut();
+                    }}
+                  >
+                    <Typography textAlign="center">Logout</Typography>
+                  </MenuItem>
                 </Menu>
               </>
             ) : (

@@ -8,10 +8,7 @@ type Response = {
   message?: string;
 };
 
-export default async function handler(
-  req: NextApiRequest,
-  res: NextApiResponse<Response>
-) {
+export default async function handler(req: NextApiRequest, res: NextApiResponse<Response>) {
   if (req.method === "POST") {
     const { name, email, password } = req.body;
 
@@ -45,7 +42,7 @@ export default async function handler(
         emailVerified: new Date(),
         image: null,
         password: hashedPassword,
-        role: 0
+        role: 0,
       },
     });
 
