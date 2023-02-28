@@ -39,6 +39,7 @@ model User {
   // 0 = admin, 1 = user
   role                 Int                    @default(1)
   SellPostUserBookmark SellPostUserBookmark[]
+  SellPost             SellPost[]
 
   @@map("users")
 }
@@ -67,6 +68,8 @@ model SellPost {
   name        String
   description String
   status      String
+  sellerId    String                 @map("seller_id") @db.Uuid
+  seller      User                   @relation(fields: [sellerId], references: [id], onDelete: Cascade)
   Bookmark    SellPostUserBookmark[]
 }
 
