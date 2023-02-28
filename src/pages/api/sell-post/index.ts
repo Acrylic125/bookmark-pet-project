@@ -2,9 +2,10 @@
 import client from "@/utils/prisma";
 import { SellPost } from "@prisma/client";
 import type { NextApiRequest, NextApiResponse } from "next";
+import { getServerSession } from "next-auth";
 import { z } from "zod";
+import { authOptions } from "../auth/[...nextauth]";
 
-const SellPostGetBody = z.object({});
 const CreateSellPostBody = z.object({
   name: z.string().min(8).max(128),
   description: z.string().min(0).max(1024),
@@ -12,14 +13,24 @@ const CreateSellPostBody = z.object({
 });
 
 async function POST(req: NextApiRequest, res: NextApiResponse<SellPost>) {
+  const session = await getServerSession(req, res, authOptions);
+  if (!session) {
+    res.status(401).end();
+    return;
+  }
+  console.log(session);
+
   const body = CreateSellPostBody.parse(req.body);
 
   try {
+    console.log("TEST");
+    console.log(session.user.id);
     const created = await client.sellPost.create({
       data: {
         name: body.name,
         description: body.description,
         status: body.status,
+        sellerId: session.user.id,
       },
     });
     res.status(200).json(created);
@@ -30,8 +41,6 @@ async function POST(req: NextApiRequest, res: NextApiResponse<SellPost>) {
 }
 
 async function GET(req: NextApiRequest, res: NextApiResponse<SellPost[]>) {
-  const body = SellPostGetBody.parse(req.body);
-
   try {
     const sellPosts = await client.sellPost.findMany();
     res.status(200).json(sellPosts);
