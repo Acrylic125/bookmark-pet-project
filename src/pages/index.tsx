@@ -1,4 +1,4 @@
-import { Container, Box, Typography, Grid, Stack, useTheme, Button, Chip } from "@mui/material";
+import { Container, Box, Typography, Grid, Stack, useTheme, Button, Chip, IconButton } from "@mui/material";
 import Head from "next/head";
 import Image from "next/image";
 import BookmarkBorderIcon from "@mui/icons-material/BookmarkBorder";
@@ -92,21 +92,7 @@ function SellPostListing({ name, bookmarked, soldOut }: { name: string; bookmark
           >
             {name}
           </Typography>
-          <Box>
-            {bookmarked ? (
-              <BookmarkIcon color="primary" />
-            ) : (
-              <BookmarkBorderIcon
-                sx={{
-                  color: "grey.300",
-                  "&:hover": {
-                    color: "primary.300",
-                  },
-                }}
-                color="inherit"
-              />
-            )}
-          </Box>
+          <IconButton>{bookmarked ? <BookmarkIcon color="primary" /> : <BookmarkBorderIcon color="inherit" />}</IconButton>
         </Stack>
         <Stack
           sx={{
@@ -132,7 +118,7 @@ const SellPostSchema = z.object({
   id: z.string(),
   name: z.string(),
   description: z.string(),
-  status: z.enum(["active", "inactive"]),
+  status: z.enum(["available", "sold_out"]),
 });
 const SellPostArraySchema = z.array(SellPostSchema);
 
