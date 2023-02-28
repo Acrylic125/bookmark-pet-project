@@ -3,7 +3,9 @@ import client from "@/utils/prisma";
 import { SellPost, SellPostUserBookmark, User } from "@prisma/client";
 import type { NextApiRequest, NextApiResponse } from "next";
 import { z } from "zod";
-import { EmailRequestBody } from "src/pages/api/sendNotificationEmail";
+import { EmailRequestBody } from "@/pages/api/notification/sendNotificationEmail";
+import sendNotificationEmail from "@/pages/api/notification/sendNotificationEmail";
+import { getServerSession } from "next-auth";
 
 const UpdateSellPostBookmarkBody = z.object({
   status: z.enum(["available", "sold_out"]),
@@ -18,6 +20,15 @@ async function PATCH(
 
   console.log("Updating sell post status:", sellPostId, body.status);
 
+  // const session = await getServerSession(req);
+  // if (!session || !session.user) {
+  //   res.status(401).end();
+  //   return;
+  // }
+
+  // log user email
+  // console.log("User email:", session.user.email);
+
   try {
     const updated = await client.sellPost.update({
       data: {
@@ -29,10 +40,7 @@ async function PATCH(
     });
 
     // Fetch all users from the User table who have bookmarked this sell post
-    const results: SellPostUserBookmark &
-      {
-        user: User;
-      }[] = await client.sellPostUserBookmark.findMany({
+    const results: (SellPostUserBookmark & { user: User; })[] = await client.sellPostUserBookmark.findMany({
       where: {
         sellPostId: sellPostId,
       },
@@ -40,11 +48,6 @@ async function PATCH(
         user: true,
       },
     });
-
-    /*  Each call to the email endpoint is an asynchronous network call.
-     *  map creates an array of promises for each network call.
-     *  Promise.all() waits for all promises to resolve before logging the results.
-     */
 
     const emailRequests = results.map(async (result) => {
       const user = result.user;
@@ -61,17 +64,7 @@ async function PATCH(
         message: `The status of the sell post with id ${sellPostId} has been updated to ${body.status}`,
       };
 
-      const response = await fetch("http://localhost:3000/api/sendNotificationEmail", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(requestBody),
-      });
-
-      const data = await response.json();
-      console.log(data);
-      return data;
+      return await sendNotificationEmail(requestBody);
     });
 
     const emailResponses = await Promise.all(emailRequests);

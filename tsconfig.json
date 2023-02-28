@@ -19,6 +19,6 @@
       "@/*": ["./src/*"]
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "types/**/*.ts", "src/utils/sib.js"],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "types/**/*.ts", "src/utils/sib.js", "src/pages/api/sendNotificationEmail"],
   "exclude": ["node_modules"]
 }

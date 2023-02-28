@@ -1,7 +1,7 @@
 import { Container, Box, Button } from "@mui/material";
 import { signIn } from "next-auth/react";
 import Head from "next/head";
-import { EmailRequestBody } from "./api/sendNotificationEmail";
+import { EmailRequestBody } from "./api/notification/sendNotificationEmail";
 
 export default function Home() {
   async function sendNotificationEmail() {
