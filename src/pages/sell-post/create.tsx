@@ -1,10 +1,12 @@
 import MainLayout from "@/components/MainLayout";
 import { Alert, Box, Button, CircularProgress, Container, Stack, TextField, Typography } from "@mui/material";
+import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 import { useState } from "react";
 import { useMutation } from "react-query";
 
 const CreateSellPost = () => {
+  const { data: session } = useSession();
   const router = useRouter();
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
@@ -14,10 +16,12 @@ const CreateSellPost = () => {
     error: createSellPostError,
     mutate: createSellPost,
   } = useMutation(async ({ name, description }: { name: string; description: string }) => {
+    // console.log("Creating sell post " + JSON.stringify(session));
     const resp = await fetch("/api/sell-post", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
+        // Authorization: session?.accessToken && `Bearer ${session?.accessToken}`,
       },
       body: JSON.stringify({
         name,
@@ -85,7 +89,7 @@ const CreateSellPost = () => {
               {createSellPostError && (
                 <Alert severity="error">{createSellPostError instanceof Error ? createSellPostError.message : "An unknown error occured."}</Alert>
               )}
-              {createSellPostIsSuccess && <Alert severity="success">Created Sell Post! Redirecting to sell post.</Alert>}
+              {createSellPostIsSuccess && <Alert severity="success">Created Sell Post!</Alert>}
             </>
             <Box>
               <Button
