@@ -35,7 +35,7 @@ export default async function sendNotificationEmail(parameters: EmailRequestBody
         <h1>Listing Alerts</h1>
         <p>Hi ${name},</p>
         <p>Here are your latest alerts:</p>
-        <p>${message}</p>
+        ${message}
         <p><a href="http://localhost:3000/unsubscribe">Manage your Alert Preferences</a></p>
       </body>
       </html>

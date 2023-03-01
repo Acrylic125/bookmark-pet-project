@@ -61,7 +61,7 @@ async function PATCH(
       const requestBody: EmailRequestBody = {
         emailID: user.email,
         name: user.name ?? "there", // If there's no name, the user gets addressed with "Hi there"
-        message: `The status of the sell post <h5>"${updated.title}"</h5> has been updated to "${updated.status}".<br><a href="http://localhost:3000/sell-post/${updated.id}">Click to check it out.</a>`,
+        message: `The sell post <h5>"${updated.name}"</h5> is now "${updated.status === "available" ? "Available" : "Sold Out"}".<br><br><a href="http://localhost:3000/sell-post/${updated.id}">Click to check it out.</a>`,
       };
 
       return await sendNotificationEmail(requestBody);
