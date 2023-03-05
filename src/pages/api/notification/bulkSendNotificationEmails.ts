@@ -5,7 +5,7 @@ type Response = {
   message?: string;
 };
 
-export interface EmailRequestBody {
+export type EmailRequestBody = {
   messageVersions: {
     to: {
       email: string;
