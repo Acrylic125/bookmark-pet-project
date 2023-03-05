@@ -3,9 +3,8 @@ import client from "@/utils/prisma";
 import { SellPost, SellPostUserBookmark, User } from "@prisma/client";
 import type { NextApiRequest, NextApiResponse } from "next";
 import { z } from "zod";
-import { EmailRequestBody } from "@/pages/api/notification/sendNotificationEmail";
-import sendNotificationEmail from "@/pages/api/notification/sendNotificationEmail";
-// import { getServerSession } from "next-auth";
+import { EmailRequestBody } from "@/pages/api/notification/bulkSendNotificationEmails";
+import sendNotificationEmail from "@/pages/api/notification/bulkSendNotificationEmails";
 
 const UpdateSellPostBookmarkBody = z.object({
   status: z.enum(["available", "sold_out"]),
@@ -20,15 +19,6 @@ async function PATCH(
 
   console.log("Updating sell post status:", sellPostId, body.status);
 
-  // const session = await getServerSession(req);
-  // if (!session || !session.user) {
-  //   res.status(401).end();
-  //   return;
-  // }
-
-  // log user email
-  // console.log("User email:", session.user.email);
-
   try {
     const updated = await client.sellPost.update({
       data: {
@@ -40,16 +30,21 @@ async function PATCH(
     });
 
     // Fetch all users from the User table who have bookmarked this sell post
-    const results: (SellPostUserBookmark & { user: User; })[] = await client.sellPostUserBookmark.findMany({
-      where: {
-        sellPostId: sellPostId,
-      },
-      include: {
-        user: true,
-      },
-    });
+    const results: (SellPostUserBookmark & { user: User })[] =
+      await client.sellPostUserBookmark.findMany({
+        where: {
+          sellPostId: sellPostId,
+        },
+        include: {
+          user: true,
+        },
+      });
 
-    const emailRequests = results.map(async (result) => {
+    const emailRequestBody: EmailRequestBody = {
+      messageVersions: [],
+    };
+
+    const emailRequests = results.map((result) => {
       const user = result.user;
       if (!user.email) {
         console.log("User does not have an email:", user);
@@ -58,17 +53,27 @@ async function PATCH(
 
       console.log("Notifying user:", user.email);
 
-      const requestBody: EmailRequestBody = {
-        emailID: user.email,
-        name: user.name ?? "there", // If there's no name, the user gets addressed with "Hi there"
-        message: `The sell post <h5>"${updated.name}"</h5> is now "${updated.status === "available" ? "Available" : "Sold Out"}".<br><br><a href="http://localhost:3000/sell-post/${updated.id}">Click to check it out.</a>`,
-      };
-
-      return await sendNotificationEmail(requestBody);
+      emailRequestBody.messageVersions.push({
+        // To understand why this is an array, see the comment in /api/notification/bulkSendNotificationEmails.ts
+        to: [
+          {
+            email: user.email,
+            name: user.name ?? "SIWMA User",
+          },
+        ],
+        params: {
+          name: user.name ?? "SIWMA User",
+          message: `The sell post <h5>"${updated.name}"</h5> is now "${
+            updated.status === "available" ? "Available" : "Sold Out"
+          }".<br><br><a href="http://localhost:3000/sell-post/${
+            updated.id
+          }">Click to check it out.</a>`,
+        },
+      });
     });
 
-    const emailResponses = await Promise.all(emailRequests);
-    console.log("Email responses:", emailResponses);
+    const emailResponse = await sendNotificationEmail(emailRequestBody);
+    console.log("Email response:", emailResponse.success);
 
     res.status(200).json(updated);
   } catch (error) {
@@ -82,7 +87,6 @@ async function GET(
   req: NextApiRequest,
   res: NextApiResponse<SellPostUserBookmark[]>
 ) {
-
   try {
     const sellPost = await client.sellPostUserBookmark.findMany({
       where: {
