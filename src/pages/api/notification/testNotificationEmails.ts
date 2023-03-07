@@ -1,29 +1,13 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import sibClient from "src/utils/sib.js";
-
-type Response = {
-  success: boolean;
-  message?: string;
-};
-
-export type EmailRequestBody = {
-  messageVersions: {
-    to: {
-      email: string;
-      name: string;
-    }[];
-    params: {
-      name: string;
-      message: string;
-    };
-  }[];
-};
+import { Response } from "@/types/Response";
+import { BulkEmailRequestBody } from "@/types/BulkEmailRequestBody";
 
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse<Response>
 ) {
-  const data: EmailRequestBody = {
+  const data: BulkEmailRequestBody = {
     messageVersions: [],
   };
 

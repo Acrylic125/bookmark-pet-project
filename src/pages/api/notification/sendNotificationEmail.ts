@@ -1,16 +1,8 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import sibClient from "src/utils/sib.js";
+import { Response } from "@/types/Response";
+import { EmailRequestBody } from "@/types/EmailRequestBody";
 
-type Response = {
-  success: boolean;
-  message?: string;
-};
-
-export type EmailRequestBody = {
-  emailID: string;
-  name: string;
-  message: string;
-};
 
 // export default async function handler(
 //   req: NextApiRequest,

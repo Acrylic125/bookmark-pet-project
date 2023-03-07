@@ -63,6 +63,14 @@ model VerificationToken {
   @@map("verificationtokens")
 }
 
+model Notification {
+  id         String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  userId     String   @map("user_id") @db.Uuid
+  createdAt  DateTime @default(now()) @map("updated_at")
+
+  @@map("notifications")
+}
+
 model SellPost {
   id          String                 @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   name        String

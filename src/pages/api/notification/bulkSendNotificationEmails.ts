@@ -1,31 +1,11 @@
 import sibClient from "src/utils/sib.js";
-
-type Response = {
-  success: boolean;
-  message?: string;
-};
-
-export type EmailRequestBody = {
-  messageVersions: {
-    to: {
-      email: string;
-      name: string;
-    }[];
-    /* SendInBlue requires this to be an array.
-    But if you do this, every user with this messageVersion will receive the same email.
-    So we just create as many messageVersions as there are users.
-    */
-    params: {
-      name: string;
-      message: string;
-    };
-  }[];
-}
+import { Response } from "@/types/Response";
+import { BulkEmailRequestBody } from "@/types/BulkEmailRequestBody";
 
 export default async function sendNotificationEmail(
-  parameters: EmailRequestBody
+  parameters: BulkEmailRequestBody
 ): Promise<Response> {
-  const data: EmailRequestBody = parameters;
+  const data: BulkEmailRequestBody = parameters;
 
   console.log("Sending email to:");
   data.messageVersions.forEach((body) => {

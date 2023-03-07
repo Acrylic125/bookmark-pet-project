@@ -3,7 +3,7 @@ import client from "@/utils/prisma";
 import { SellPost, SellPostUserBookmark, User } from "@prisma/client";
 import type { NextApiRequest, NextApiResponse } from "next";
 import { z } from "zod";
-import { EmailRequestBody } from "@/pages/api/notification/bulkSendNotificationEmails";
+import { BulkEmailRequestBody } from "@/types/BulkEmailRequestBody";
 import sendNotificationEmail from "@/pages/api/notification/bulkSendNotificationEmails";
 
 const UpdateSellPostBookmarkBody = z.object({
@@ -40,7 +40,7 @@ async function PATCH(
         },
       });
 
-    const emailRequestBody: EmailRequestBody = {
+    const emailRequestBody: BulkEmailRequestBody = {
       messageVersions: [],
     };
 
