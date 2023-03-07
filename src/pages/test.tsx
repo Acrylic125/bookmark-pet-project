@@ -11,12 +11,25 @@ export default function Home() {
       message: "This is a test message",
     };
 
-    const response = await fetch("/api/sendNotificationEmail", {
+    console.log(requestBody);
+
+    const response = await fetch("/api/notification/sendNotificationEmail", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify(requestBody),
+    });
+    const data = await response.json();
+  }
+
+  async function sendTestNotificationEmails() {
+    const response = await fetch("/api/notification/testNotificationEmails", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: "",
     });
     const data = await response.json();
     console.log(data);
@@ -71,6 +84,9 @@ export default function Home() {
           </Button>
           <Button variant="contained" color="primary" sx={{ m: 2, textAlign: "center", width: "60%" }} onClick={testSignInNextAuth}>
             Test Sign In (Hardcoded credentials, NextAuth)
+          </Button>
+          <Button variant="contained" color="primary" sx={{ m: 2, textAlign: "center", width: "60%" }} onClick={sendTestNotificationEmails}>
+            Spam My Inbox (DO NOT CLICK THIS)
           </Button>
         </Box>
       </main>
