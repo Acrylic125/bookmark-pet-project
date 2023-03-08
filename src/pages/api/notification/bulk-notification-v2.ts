@@ -1,17 +1,21 @@
 import client from "@/utils/prisma";
 import { Response } from "@/types/Response";
-import {
-  SellPost,
-  SellPostUserBookmark,
-  User,
-  UserNotification,
-} from "@prisma/client";
-import sendNotificationEmail from "./bulkSendNotificationEmails";
+import { SellPost, User, UserNotification } from "@prisma/client";
 import { BulkEmailRequestBody } from "@/types/BulkEmailRequestBody";
+import bulkSendNotificationEmails from "./bulkSendNotificationEmails";
+import { NextApiRequest, NextApiResponse } from "next";
 
+// export default async function handler(
+//   req: NextApiRequest,
+//   res: NextApiResponse<Response>
+// ) {
 export default async function sendBulkNotifications(
   data: UserNotification[]
 ): Promise<Response> {
+  // const data: UserNotification[] = req.body;
+
+  const testMode: boolean = true;
+
   /* Adds all the notifications to the database.
     If the status of the post changes back to the original, then remove the notification from the database.
     If the status of the post changes to a different status, just update the notification in the database.
@@ -27,51 +31,63 @@ export default async function sendBulkNotifications(
     },
   });
 
-  // Add all the notifications to the database, skipping duplicates
-  await client.userNotification.createMany({
-    data: data,
-    skipDuplicates: true, // Uniqueness is determined by the userId
-  });
+  // testMode is used to prevent the database from being updated when running tests
+  if (!testMode && data.length > 0) {
+    // Create array of notifications without the id
+    const notificationsWithoutId = data.map((notification) => {
+      return {
+        userId: notification.userId,
+        originalPostStatus: notification.originalPostStatus,
+        sellPostId: notification.sellPostId,
+      };
+    });
 
-  // Find all the notifications that exist in both arrays
-  const notificationsToBeUpdated = existingNotifications.filter(
-    (existingNotification) => {
-      return data.some(
-        (notification) => notification.userId === existingNotification.userId
-      );
-    }
-  );
+    // Add all the notifications to the database, skipping duplicates
+    await client.userNotification.createMany({
+      data: notificationsWithoutId,
+      skipDuplicates: true, // Uniqueness is determined by the userId
+    });
 
-  notificationsToBeUpdated.map(async (notification) => {
-    // Find the notification in the array of notifications to be added
-    const notificationToBeAdded = data.find(
-      (notification) => notification.userId === notification.userId
+    // Find all the notifications that exist in both arrays
+    const notificationsToBeUpdated = existingNotifications.filter(
+      (existingNotification) => {
+        return data.some(
+          (notification) => notification.userId === existingNotification.userId
+        );
+      }
     );
 
-    if (notificationToBeAdded === undefined) {
-      return;
-    }
+    if (notificationsToBeUpdated.length > 0) {
+      notificationsToBeUpdated.map(async (notification) => {
+        // Find the notification in the array of notifications to be added
+        const notificationToBeAdded = data.find(
+          (notification) => notification.userId === notification.userId
+        );
 
-    /* For the purposes of this demo project, we assume there are only two statuses: available and sold_out.
+        if (notificationToBeAdded === undefined) {
+          return;
+        }
+
+        /* For the purposes of this demo project, we assume there are only two statuses: available and sold_out.
     If the status of the post changes at all, it logically means that the post is now back to the original status.
     This means the user does not need to be notified of the change, so we remove the notification from the database.
     
     In an actual production application, there would likely be more statuses, and the user would need to be notified of the change.
     In this case, we would require two db columns: originalPostStatus and currentPostStatus.
     */
-    if (
-      notificationToBeAdded.originalPostStatus !==
-      notification.originalPostStatus
-    ) {
-      // Remove the notifications from the database
-      await client.userNotification.delete({
-        where: {
-          id: notification.id,
-        },
-      });
-    }
+        if (
+          notificationToBeAdded.originalPostStatus !==
+          notification.originalPostStatus
+        ) {
+          // Remove the notifications from the database
+          await client.userNotification.delete({
+            where: {
+              id: notification.id,
+            },
+          });
+        }
 
-    /*
+        /*
     // In a production app, we would update the currentPostStatus column with something like this:
     await client.userNotification.update({
       where: {
@@ -83,7 +99,9 @@ export default async function sendBulkNotifications(
       },
     });
     */
-  });
+      });
+    }
+  }
 
   // Filter out all the notifications that were queued less than 5 minutes ago
   const notificationsToSend = existingNotifications.filter((notification) => {
@@ -91,6 +109,8 @@ export default async function sendBulkNotifications(
       ? false
       : notification.updatedAt < new Date(Date.now() - 5 * 60 * 1000);
   });
+
+  console.log(notificationsToSend);
 
   // Create the BulkEmailRequestBody
   const body: BulkEmailRequestBody = {
@@ -113,50 +133,60 @@ export default async function sendBulkNotifications(
   });
 
   // Create the message versions
-  const messageVersions = Object.keys(notificationsByUser).map(
-    async (userId) => {
-      const userNotifications = notificationsByUser[userId];
+  await Promise.all(
+    Object.keys(notificationsByUser).map(async (userId) => {
+      try {
+        const userNotifications = notificationsByUser[userId];
 
-      const message: string = userNotifications
-        .map((notification) => {
-          return `The sell post <h5>"${
-            notification.SellPost.name
-          }"</h5> is now "${
-            notification.SellPost.status === "available"
-              ? "Available"
-              : "Sold Out"
-          }". <a href="http://localhost:3000/sell-post/${
-            notification.SellPost.id
-          }">Click to check it out.</a>`;
-        })
-        .join("<br><br>");
+        const message: string = userNotifications
+          .map((notification) => {
+            return `The sell post <h5>"${
+              notification.SellPost.name
+            }"</h5> is now "${
+              notification.SellPost.status === "available"
+                ? "Available"
+                : "Sold Out"
+            }". <a href="http://localhost:3000/sell-post/${
+              notification.SellPost.id
+            }">Click to check it out.</a>`;
+          })
+          .join("<br><br>");
 
-      const user = notificationsByUser[userId][0].User as User;
+        const user = notificationsByUser[userId][0].User as User;
 
-      if (user === null || user.email === null || user.name === null) {
-        return;
-      }
+        if (user === null || user.email === null) {
+          return;
+        }
 
-      // Create the message version
-      body.messageVersions.push({
-        to: [
-          {
-            email: user.email,
-            name: user.name,
+        // Create the message version
+        body.messageVersions.push({
+          to: [
+            {
+              email: user.email,
+              name: "user",
+            },
+          ],
+          params: {
+            name: "user",
+            message: message,
           },
-        ],
-        params: {
-          name: user.name,
-          message: message,
-        },
-      });
-    }
+        });
+      } catch (error) {
+        console.log(error);
+      }
+    })
   );
 
-  // Wait for all the message versions to be created
-  await Promise.all(messageVersions);
+  console.log("body", body);
 
-  const emailResponse = await sendNotificationEmail(body);
+  if (body.messageVersions.length === 0) {
+    console.log("No notifications to send");
+    return {
+      success: true,
+    };
+  }
+
+  const emailResponse = await bulkSendNotificationEmails(body);
 
   if (emailResponse.success) {
     // Remove the notifications from the database

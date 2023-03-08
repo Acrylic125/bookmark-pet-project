@@ -7,6 +7,8 @@ export default async function sendNotificationEmail(
 ): Promise<Response> {
   const data: BulkEmailRequestBody = parameters;
 
+  console.log(data);
+
   console.log("Sending email to:");
   data.messageVersions.forEach((body) => {
     console.log(body.to[0].email);

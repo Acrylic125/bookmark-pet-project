@@ -4,12 +4,12 @@ import { Response } from "@/types/Response";
 import { EmailRequestBody } from "@/types/EmailRequestBody";
 
 
-// export default async function handler(
-//   req: NextApiRequest,
-//   res: NextApiResponse<Response>
-// ) {
-export default async function sendNotificationEmail(parameters: EmailRequestBody): Promise<Response> {
-  // const parameters: EmailRequestBody = req.body;
+export default async function handler(
+  req: NextApiRequest,
+  res: NextApiResponse<Response>
+) {
+// export default async function sendNotificationEmail(parameters: EmailRequestBody): Promise<Response> {
+  const parameters: EmailRequestBody = req.body;
   const { emailID, name, message }: EmailRequestBody = parameters;
   console.log("Sending email to " + emailID);
 

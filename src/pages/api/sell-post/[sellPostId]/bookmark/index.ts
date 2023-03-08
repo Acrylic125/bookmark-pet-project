@@ -8,8 +8,6 @@ import {
 } from "@prisma/client";
 import type { NextApiRequest, NextApiResponse } from "next";
 import { z } from "zod";
-import { BulkEmailRequestBody } from "@/types/BulkEmailRequestBody";
-import sendNotificationEmail from "@/pages/api/notification/bulkSendNotificationEmails";
 import sendBulkNotifications from "@/pages/api/notification/bulk-notification-v2";
 
 const UpdateSellPostBookmarkBody = z.object({
@@ -60,7 +58,12 @@ async function PATCH(
     );
 
     const emailResponse = await sendBulkNotifications(notificationRequests);
-    console.log("Email response:", emailResponse.success);
+
+    if (emailResponse.success) {
+      res.status(200).json(updated);
+    } else {
+      res.status(500).end();
+    }
 
     // const emailRequestBody: BulkEmailRequestBody = {
     //   messageVersions: [],
@@ -96,8 +99,6 @@ async function PATCH(
 
     // const emailResponse = await sendNotificationEmail(emailRequestBody);
     // console.log("Email response:", emailResponse.success);
-
-    res.status(200).json(updated);
   } catch (error) {
     console.error(error);
     res.status(500).end();
