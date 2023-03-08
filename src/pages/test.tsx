@@ -1,9 +1,10 @@
 import { Container, Box, Button } from "@mui/material";
 import { signIn } from "next-auth/react";
 import Head from "next/head";
-import { EmailRequestBody } from "./api/notification/sendNotificationEmail";
+import { EmailRequestBody } from "@/types/EmailRequestBody";
 
 export default function Home() {
+
   async function sendNotificationEmail() {
     const requestBody: EmailRequestBody = {
       emailID: "karandeepsingh00@icloud.com",
@@ -11,12 +12,37 @@ export default function Home() {
       message: "This is a test message",
     };
 
-    const response = await fetch("/api/sendNotificationEmail", {
+    console.log(requestBody);
+
+    const response = await fetch("/api/notification/sendNotificationEmail", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify(requestBody),
+    });
+    const data = await response.json();
+  }
+
+  async function sendTestNotificationEmails() {
+    const response = await fetch("/api/notification/testNotificationEmails", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: "",
+    });
+    const data = await response.json();
+    console.log(data);
+  }
+
+  async function testBulkNotifsV2() {
+    const response = await fetch("/api/notification/bulk-notification-v2", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: "",
     });
     const data = await response.json();
     console.log(data);
@@ -71,6 +97,12 @@ export default function Home() {
           </Button>
           <Button variant="contained" color="primary" sx={{ m: 2, textAlign: "center", width: "60%" }} onClick={testSignInNextAuth}>
             Test Sign In (Hardcoded credentials, NextAuth)
+          </Button>
+          <Button variant="contained" color="primary" sx={{ m: 2, textAlign: "center", width: "60%" }} onClick={sendTestNotificationEmails}>
+            Spam My Inbox (DO NOT CLICK THIS)
+          </Button>
+          <Button variant="contained" color="primary" sx={{ m: 2, textAlign: "center", width: "60%" }} onClick={testBulkNotifsV2}>
+            Test Bulk Notifications V2
           </Button>
         </Box>
       </main>

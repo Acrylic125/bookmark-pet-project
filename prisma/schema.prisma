@@ -40,6 +40,7 @@ model User {
   role                 Int                    @default(1)
   SellPostUserBookmark SellPostUserBookmark[]
   SellPost             SellPost[]
+  Notification         UserNotification[]
 
   @@map("users")
 }
@@ -63,22 +64,36 @@ model VerificationToken {
   @@map("verificationtokens")
 }
 
+model UserNotification {
+  id                 String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  userId             String    @unique @map("user_id") @db.Uuid
+  updatedAt          DateTime? @default(now()) @map("updated_at")
+  originalPostStatus String
+  sellPostId         String    @map("sell_post_id") @db.Uuid
+  User               User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  SellPost           SellPost  @relation(fields: [sellPostId], references: [id], onDelete: Cascade)
+
+  @@map("notifications")
+}
+
 model SellPost {
-  id          String                 @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  name        String
-  description String
-  status      String
-  sellerId    String                 @map("seller_id") @db.Uuid
-  seller      User                   @relation(fields: [sellerId], references: [id], onDelete: Cascade)
-  Bookmark    SellPostUserBookmark[]
+  id               String                 @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name             String
+  description      String
+  status           String
+  sellerId         String                 @map("seller_id") @db.Uuid
+  seller           User                   @relation(fields: [sellerId], references: [id], onDelete: Cascade)
+  Bookmark         SellPostUserBookmark[]
+  UserNotification UserNotification[]
 }
 
 model SellPostUserBookmark {
-  id         String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  userId     String   @map("user_id") @db.Uuid
-  sellPostId String   @map("sell_post_id") @db.Uuid
-  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  sellPost   SellPost @relation(fields: [sellPostId], references: [id], onDelete: Cascade)
+  id             String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  userId         String   @map("user_id") @db.Uuid
+  sellPostId     String   @map("sell_post_id") @db.Uuid
+  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  sellPost       SellPost @relation(fields: [sellPostId], references: [id], onDelete: Cascade)
+  notificationId String?  @db.Uuid
 
   @@unique([userId, sellPostId])
   @@map("Bookmark")
