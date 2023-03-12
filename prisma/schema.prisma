@@ -98,3 +98,12 @@ model SellPostUserBookmark {
   @@unique([userId, sellPostId])
   @@map("Bookmark")
 }
+
+model APIKey {
+  key     String   @id
+  uses    Int      @default(0)
+  sibEmail String 
+
+  @@unique([key, sibEmail])
+  @@map("apikeys")
+}
