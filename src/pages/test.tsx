@@ -1,9 +1,20 @@
-import { Container, Box, Button } from "@mui/material";
+import {
+  Container,
+  Box,
+  Button,
+  FormGroup,
+  Divider,
+  TextField,
+} from "@mui/material";
 import { signIn } from "next-auth/react";
 import Head from "next/head";
 import { EmailRequestBody } from "@/types/EmailRequestBody";
+import { SIBKey } from "@prisma/client";
+import { useState } from "react";
 
 export default function Home() {
+  const [apiKeys, setApiKeys] = useState<SIBKey[]>([]);
+  const [numKeys, setNumKeys] = useState(1);
 
   async function sendNotificationEmail() {
     const requestBody: EmailRequestBody = {
@@ -84,26 +95,122 @@ export default function Home() {
             justifyContent: "center",
           }}
         >
-          <Button variant="contained" color="primary" sx={{ m: 2, textAlign: "center", width: "60%" }} onClick={() => signIn()}>
+          <Button
+            variant="contained"
+            color="primary"
+            sx={{ m: 2, textAlign: "center", width: "60%" }}
+            onClick={() => signIn()}
+          >
             Sign In
           </Button>
           <br />
-          <Button variant="contained" color="primary" sx={{ m: 2, textAlign: "center", width: "60%" }} onClick={sendNotificationEmail}>
+          <Button
+            variant="contained"
+            color="primary"
+            sx={{ m: 2, textAlign: "center", width: "60%" }}
+            onClick={sendNotificationEmail}
+          >
             Send Notification Email
           </Button>
           <br />
-          <Button variant="contained" color="primary" sx={{ m: 2, textAlign: "center", width: "60%" }} onClick={testSignIn}>
+          <Button
+            variant="contained"
+            color="primary"
+            sx={{ m: 2, textAlign: "center", width: "60%" }}
+            onClick={testSignIn}
+          >
             Test Sign In (Hardcoded credentials, Prisma)
           </Button>
-          <Button variant="contained" color="primary" sx={{ m: 2, textAlign: "center", width: "60%" }} onClick={testSignInNextAuth}>
+          <Button
+            variant="contained"
+            color="primary"
+            sx={{ m: 2, textAlign: "center", width: "60%" }}
+            onClick={testSignInNextAuth}
+          >
             Test Sign In (Hardcoded credentials, NextAuth)
           </Button>
-          <Button variant="contained" color="primary" sx={{ m: 2, textAlign: "center", width: "60%" }} onClick={sendTestNotificationEmails}>
+          <Button
+            variant="contained"
+            color="primary"
+            sx={{ m: 2, textAlign: "center", width: "60%" }}
+            onClick={sendTestNotificationEmails}
+          >
             Spam My Inbox (DO NOT CLICK THIS)
           </Button>
-          <Button variant="contained" color="primary" sx={{ m: 2, textAlign: "center", width: "60%" }} onClick={testBulkNotifsV2}>
+          <Button
+            variant="contained"
+            color="primary"
+            sx={{ m: 2, textAlign: "center", width: "60%" }}
+            onClick={testBulkNotifsV2}
+          >
             Test Bulk Notifications V2
           </Button>
+        </Box>
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <Divider sx={{ width: "100%" }} />
+          <Box sx={{ display: "flex", flexDirection: "row" }}>
+            <Button
+              variant="contained"
+              color="primary"
+              sx={{ fontSize: "1.5em", m: 2 }}
+              onClick={() => setNumKeys(numKeys + 1)}
+            >
+              +
+            </Button>
+            <Button
+              variant="contained"
+              color="primary"
+              sx={{ fontSize: "1.5em", m: 2 }}
+              disabled={numKeys === 1}
+              onClick={() => setNumKeys(numKeys - 1)}
+            >
+              -
+            </Button>
+          </Box>
+          <FormGroup>
+            <form>
+              {Array.from(Array(numKeys).keys()).map((key) => (
+                <Box
+                  key={key}
+                  sx={{
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "center",
+                    justifyContent: "center",
+                  }}
+                >
+                  <TextField
+                    id="key"
+                    label="Key"
+                    variant="outlined"
+                    sx={{ m: 1 }}
+                  />
+                  <TextField
+                    id="sibEmail"
+                    label="SIB Email"
+                    variant="outlined"
+                    sx={{ m: 1 }}
+                  />
+                  <Divider sx={{ width: "100%", m: 1.5 }} />
+                </Box>
+              ))}
+              <Button
+                variant="contained"
+                color="primary"
+                sx={{ textAlign: "center", width: "100%"}}
+                type="submit"
+              >
+                Submit
+              </Button>
+            </form>
+          </FormGroup>
         </Box>
       </main>
     </Container>

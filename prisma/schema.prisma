@@ -34,13 +34,12 @@ model User {
   email                String?                @unique
   emailVerified        DateTime?              @map("email_verified")
   image                String?
-  accounts             Account[]
-  sessions             Session[]
-  // 0 = admin, 1 = user
   role                 Int                    @default(1)
   SellPostUserBookmark SellPostUserBookmark[]
   SellPost             SellPost[]
-  Notification         UserNotification[]
+  accounts             Account[]
+  Notification         UserNotification?
+  sessions             Session[]
 
   @@map("users")
 }
@@ -70,8 +69,8 @@ model UserNotification {
   updatedAt          DateTime? @default(now()) @map("updated_at")
   originalPostStatus String
   sellPostId         String    @map("sell_post_id") @db.Uuid
-  User               User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   SellPost           SellPost  @relation(fields: [sellPostId], references: [id], onDelete: Cascade)
+  User               User      @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("notifications")
 }
@@ -82,8 +81,8 @@ model SellPost {
   description      String
   status           String
   sellerId         String                 @map("seller_id") @db.Uuid
-  seller           User                   @relation(fields: [sellerId], references: [id], onDelete: Cascade)
   Bookmark         SellPostUserBookmark[]
+  seller           User                   @relation(fields: [sellerId], references: [id], onDelete: Cascade)
   UserNotification UserNotification[]
 }
 
@@ -91,19 +90,19 @@ model SellPostUserBookmark {
   id             String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   userId         String   @map("user_id") @db.Uuid
   sellPostId     String   @map("sell_post_id") @db.Uuid
-  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  sellPost       SellPost @relation(fields: [sellPostId], references: [id], onDelete: Cascade)
   notificationId String?  @db.Uuid
+  sellPost       SellPost @relation(fields: [sellPostId], references: [id], onDelete: Cascade)
+  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([userId, sellPostId])
   @@map("Bookmark")
 }
 
-model APIKey {
-  key     String   @id
-  uses    Int      @default(0)
-  sibEmail String 
+model SIBKey {
+  key      String @id
+  uses     Int    @default(0)
+  sibEmail String
 
   @@unique([key, sibEmail])
-  @@map("apikeys")
+  @@map("sibkeys")
 }
