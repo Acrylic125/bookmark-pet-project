@@ -1,12 +1,8 @@
 import client from "@/utils/prisma";
-import { SIBKey } from "@prisma/client";
+import { GetAPIKeyResponseBody } from "@/types/GetAPIKeyResponseBody";
 import { NextApiRequest, NextApiResponse } from "next";
 
-export type GetAPIKeyResponseBody = {
-  success: boolean;
-  key?: SIBKey;
-};
-
+// This endpoint is exclusively for testing purposes. In production, use the getAPIKey function directly.
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse<GetAPIKeyResponseBody>

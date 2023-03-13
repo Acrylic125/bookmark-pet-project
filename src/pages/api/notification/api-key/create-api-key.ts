@@ -1,12 +1,7 @@
 import client from "@/utils/prisma";
 import { Response } from "@/types/Response";
-import { SIBKey } from "@prisma/client";
+import { CreateAPIKeyRequestBody } from "@/types/CreateAPIKeyRequestBody";
 import { NextApiRequest, NextApiResponse } from "next";
-
-export type CreateAPIKeyRequestBody = {
-  key: string;
-  sibEmail: string;
-}[];
 
 export default async function handler(
   req: NextApiRequest,
