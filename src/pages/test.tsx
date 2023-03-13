@@ -9,12 +9,42 @@ import {
 import { signIn } from "next-auth/react";
 import Head from "next/head";
 import { EmailRequestBody } from "@/types/EmailRequestBody";
+import { CreateAPIKeyRequestBody } from "./api/notification/api-key/create-api-key";
 import { SIBKey } from "@prisma/client";
 import { useState } from "react";
 
 export default function Home() {
   const [apiKeys, setApiKeys] = useState<SIBKey[]>([]);
   const [numKeys, setNumKeys] = useState(1);
+
+  async function getAPIKey() {
+    const response = await fetch("/api/notification/api-key/get-api-key", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({numEmails: 10}),
+    });
+
+    const data = await response.json();
+    
+    console.log(data);
+  }
+
+  async function createAPIKey() {
+    const requestBody: CreateAPIKeyRequestBody = apiKeys;
+
+    const response = await fetch("/api/notification/api-key/create-api-key", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(requestBody),
+    });
+    const data = await response.json();
+
+    console.log(data);
+  }
 
   async function sendNotificationEmail() {
     const requestBody: EmailRequestBody = {
@@ -32,6 +62,7 @@ export default function Home() {
       },
       body: JSON.stringify(requestBody),
     });
+
     const data = await response.json();
   }
 
@@ -155,6 +186,14 @@ export default function Home() {
           }}
         >
           <Divider sx={{ width: "100%" }} />
+          <Button
+            variant="contained"
+            color="primary"
+            sx={{ m: 2, textAlign: "center", width: "60%" }}
+            onClick={getAPIKey}
+          >
+            Get API Key
+          </Button>
           <Box sx={{ display: "flex", flexDirection: "row" }}>
             <Button
               variant="contained"
@@ -175,7 +214,7 @@ export default function Home() {
             </Button>
           </Box>
           <FormGroup>
-            <form>
+            <form onSubmit={createAPIKey}>
               {Array.from(Array(numKeys).keys()).map((key) => (
                 <Box
                   key={key}
@@ -191,12 +230,36 @@ export default function Home() {
                     label="Key"
                     variant="outlined"
                     sx={{ m: 1 }}
+                    onChange={(e) => {
+                      const newKeys = [...apiKeys];
+                      if (key == apiKeys.length) {
+                        newKeys.push({
+                          key: "",
+                          sibEmail: "",
+                          uses: 300,
+                        });
+                      }
+                      newKeys[key].key = e.target.value;
+                      setApiKeys(newKeys);
+                    }}
                   />
                   <TextField
                     id="sibEmail"
                     label="SIB Email"
                     variant="outlined"
                     sx={{ m: 1 }}
+                    onChange={(e) => {
+                      const newKeys = [...apiKeys];
+                      if (key == apiKeys.length) {
+                        newKeys.push({
+                          key: "",
+                          sibEmail: "",
+                          uses: 300,
+                        });
+                      }
+                      newKeys[key].sibEmail = e.target.value;
+                      setApiKeys(newKeys);
+                    }}
                   />
                   <Divider sx={{ width: "100%", m: 1.5 }} />
                 </Box>
@@ -204,7 +267,7 @@ export default function Home() {
               <Button
                 variant="contained"
                 color="primary"
-                sx={{ textAlign: "center", width: "100%"}}
+                sx={{ textAlign: "center", width: "100%" }}
                 type="submit"
               >
                 Submit

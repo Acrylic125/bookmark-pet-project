@@ -100,7 +100,7 @@ model SellPostUserBookmark {
 
 model SIBKey {
   key      String @id
-  uses     Int    @default(0)
+  uses     Int    @default(300)
   sibEmail String
 
   @@unique([key, sibEmail])
