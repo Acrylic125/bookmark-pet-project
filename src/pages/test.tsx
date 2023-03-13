@@ -31,7 +31,9 @@ export default function Home() {
     console.log(data);
   }
 
-  async function createAPIKey() {
+  async function createAPIKey(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    
     const requestBody: CreateAPIKeyRequestBody = apiKeys;
 
     const response = await fetch("/api/notification/api-key/create-api-key", {

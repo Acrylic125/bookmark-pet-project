@@ -14,6 +14,8 @@ export default async function handler(
 ) {
   const data: CreateAPIKeyRequestBody = req.body;
 
+  console.log(data);
+
   if (!data) {
     res.status(400).json({
       success: false,

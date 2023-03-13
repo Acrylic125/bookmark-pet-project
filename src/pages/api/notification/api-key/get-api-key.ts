@@ -1,5 +1,4 @@
 import client from "@/utils/prisma";
-import { Response } from "@/types/Response";
 import { SIBKey } from "@prisma/client";
 import { NextApiRequest, NextApiResponse } from "next";
 
@@ -17,7 +16,7 @@ export default async function handler(
   const key = await client.sIBKey.findFirst({
     where: {
       uses: {
-        lte: 300 - numEmails,
+        gte: 300 - numEmails,
       },
     },
   });
