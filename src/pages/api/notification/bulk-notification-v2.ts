@@ -5,6 +5,11 @@ import { BulkEmailRequestBody } from "@/types/BulkEmailRequestBody";
 import bulkSendNotificationEmails from "./bulkSendNotificationEmails";
 import { NextApiRequest, NextApiResponse } from "next";
 
+/* This endpoint sends email notifications to multiple recipients.
+In practice, it must only be called by the cron job.
+It needs to be protected by a middleware that checks if the user is an admin.
+*/
+
 // export default async function handler(
 //   req: NextApiRequest,
 //   res: NextApiResponse<Response>

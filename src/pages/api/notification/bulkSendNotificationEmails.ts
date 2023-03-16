@@ -2,6 +2,10 @@ import sibClient from "src/utils/sib.js";
 import { Response } from "@/types/Response";
 import { BulkEmailRequestBody } from "@/types/BulkEmailRequestBody";
 
+/* This function sends email notifications to multiple recipients.
+This will not be used in production, as the cron job will call the more sophisticated bulk-notification-v2 endpoint instead.
+*/
+
 export default async function sendNotificationEmail(
   parameters: BulkEmailRequestBody
 ): Promise<Response> {
