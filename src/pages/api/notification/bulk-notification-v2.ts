@@ -15,14 +15,13 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse<Response>
 ) {
-
   // Fetch all the notifications from the database
   const existingNotifications = await client.userNotification.findMany({
     include: {
       User: true,
       SellPost: true,
     },
-  })
+  });
 
   // Filter out all the notifications that were queued less than 5 minutes ago
   const notificationsToSend = existingNotifications.filter((notification) => {
@@ -98,8 +97,6 @@ export default async function handler(
     })
   );
 
-  console.log("body", body);
-
   if (body.messageVersions.length === 0) {
     console.log("No notifications to send");
     return {
@@ -115,6 +112,18 @@ export default async function handler(
       where: {
         id: {
           in: notificationsToSend.map((notification) => notification.id),
+        },
+      },
+    });
+
+    // Update the API Key usage count
+    await client.sIBKey.update({
+      where: {
+        key: process.env.SIB_KEY,
+      },
+      data: {
+        uses: {
+          decrement: body.messageVersions.length,
         },
       },
     });
