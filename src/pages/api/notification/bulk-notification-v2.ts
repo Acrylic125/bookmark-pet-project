@@ -2,8 +2,9 @@ import client from "@/utils/prisma";
 import { Response } from "@/types/Response";
 import { SellPost, User, UserNotification } from "@prisma/client";
 import { BulkEmailRequestBody } from "@/types/BulkEmailRequestBody";
-import bulkSendNotificationEmails from "./test/bulkSendNotificationEmails";
+import bulkSendNotificationEmails from "./bulkSendNotificationEmails";
 import { NextApiRequest, NextApiResponse } from "next";
+import getAPIKey from "./api-key/getAPIKey";
 
 /* This endpoint sends email notifications to multiple recipients.
 In practice, it must only be called by the cron job.
@@ -14,7 +15,14 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse<Response>
 ) {
-  const data: UserNotification[] = req.body;
+
+  // Fetch all the notifications from the database
+  const existingNotifications = await client.userNotification.findMany({
+    include: {
+      User: true,
+      SellPost: true,
+    },
+  })
 
   // Filter out all the notifications that were queued less than 5 minutes ago
   const notificationsToSend = existingNotifications.filter((notification) => {
@@ -27,7 +35,7 @@ export default async function handler(
 
   // Create the BulkEmailRequestBody
   const body: BulkEmailRequestBody = {
-    messageVersions: [], // To understand why this is an array, see the comment in /api/notification/bulkSendNotificationEmails.ts
+    messageVersions: [], // To understand why this is an array, see the comment in @/types/BulkEmailRequestBody
   };
 
   // Separate the notifications by user, so that we can lump all the updates into a single email

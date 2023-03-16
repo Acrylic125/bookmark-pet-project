@@ -1,9 +1,10 @@
 import sibClient from "src/utils/sib.js";
 import { Response } from "@/types/Response";
 import { BulkEmailRequestBody } from "@/types/BulkEmailRequestBody";
+import getAPIKey from "./api-key/getAPIKey";
 
 /* This function sends email notifications to multiple recipients.
-This will not be used in production, as the cron job will call the more sophisticated bulk-notification-v2 endpoint instead.
+It is called by the bulk-notification-v2 endpoint.
 */
 
 export default async function sendNotificationEmail(
@@ -19,6 +20,9 @@ export default async function sendNotificationEmail(
   });
 
   const apiInstance = new sibClient.TransactionalEmailsApi();
+
+  const apiKey = sibClient.authentications["api-key"];
+  apiKey.apiKey = getAPIKey(data.messageVersions.length);
 
   const email = {
     sender: {

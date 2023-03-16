@@ -8,7 +8,7 @@ type NotificationScheduleRequestBody = {
   newPostStatus: string;
 };
 
-// This endpoint is called when the status of a sell post changes.
+// This function is called when the status of a sell post changes.
 
 export default async function scheduleNotificationEmails(
   parameters: NotificationScheduleRequestBody
