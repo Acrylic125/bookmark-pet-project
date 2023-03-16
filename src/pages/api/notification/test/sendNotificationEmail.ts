@@ -1,7 +1,7 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import sibClient from "src/utils/sib.js";
 import { Response } from "@/types/Response";
-import { EmailRequestBody } from "@/types/EmailRequestBody";
+import { EmailRequestBody } from "@/types/TestEmailRequestBody";
 
 /* This endpoint sends a single email to a single recipient.
 In practice, it will likely not be used, as the bulk email endpoint will be used instead.
