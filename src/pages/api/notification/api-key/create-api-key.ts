@@ -3,6 +3,7 @@ import { Response } from "@/types/Response";
 import { CreateAPIKeyRequestBody } from "@/types/CreateAPIKeyRequestBody";
 import { NextApiRequest, NextApiResponse } from "next";
 
+// This endpoint needs to be protected by a middleware that checks if the user is an admin.
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse<Response>

@@ -3,6 +3,10 @@ import sibClient from "src/utils/sib.js";
 import { Response } from "@/types/Response";
 import { BulkEmailRequestBody } from "@/types/BulkEmailRequestBody";
 
+/* This endpoint is meant for testing purposes only.
+It was used to test the Sendinblue API's ability to send bulk emails without lagging, and probably won't be used again.
+*/
+
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse<Response>
@@ -10,19 +14,6 @@ export default async function handler(
   const data: BulkEmailRequestBody = {
     messageVersions: [],
   };
-
-  data.messageVersions.push({
-    to: [
-      {
-        email: `acrylic125email@gmail.com`,
-        name: `benedict`,
-      },
-    ],
-    params: {
-      name: `benedict`,
-      message: "sendinblue is pain",
-    },
-  });
 
   // Create a list of 99 emails to send to
   for (let i = 0; i < 99; i++) {

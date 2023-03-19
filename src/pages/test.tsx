@@ -8,8 +8,8 @@ import {
 } from "@mui/material";
 import { signIn } from "next-auth/react";
 import Head from "next/head";
-import { EmailRequestBody } from "@/types/EmailRequestBody";
-import { CreateAPIKeyRequestBody } from "./api/notification/api-key/create-api-key";
+import { TestEmailRequestBody } from "@/types/TestEmailRequestBody";
+import { CreateAPIKeyRequestBody } from "@/types/CreateAPIKeyRequestBody";
 import { SIBKey } from "@prisma/client";
 import { useState } from "react";
 
@@ -49,7 +49,7 @@ export default function Home() {
   }
 
   async function sendNotificationEmail() {
-    const requestBody: EmailRequestBody = {
+    const requestBody: TestEmailRequestBody = {
       emailID: "karandeepsingh00@icloud.com",
       name: "Karan",
       message: "This is a test message",
